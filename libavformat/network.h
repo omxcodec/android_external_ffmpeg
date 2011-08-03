@@ -50,6 +50,9 @@ static inline int ff_neterrno(void)
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
+#ifdef ANDROID
+#define asm __asm
+#endif
 #include <netinet/in.h>
 #include <netdb.h>
 

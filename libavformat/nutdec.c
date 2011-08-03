@@ -851,6 +851,7 @@ av_log(s, AV_LOG_DEBUG, "read_timestamp(X,%d,%"PRId64",%"PRId64")\n", stream_ind
     else if(stream_index == -2) return back_ptr;
 
 assert(0);
+    return 0; // To make -Werror happy -- "error: control reaches end of non-void function"
 }
 
 static int read_seek(AVFormatContext *s, int stream_index, int64_t pts, int flags){
