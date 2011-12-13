@@ -46,7 +46,7 @@ SKIPHEADERS = cmdutils_common_opts.h
 
 include $(SRC_PATH)/common.mak
 
-FF_EXTRALIBS := $(FFEXTRALIBS)
+FF_EXTRALIBS := $(FFEXTRALIBS) $(TARGET_CRTBEGIN_DYNAMIC_O) $(TARGET_CRTEND_O)
 FF_DEP_LIBS  := $(DEP_LIBS)
 
 all: $(PROGS)
