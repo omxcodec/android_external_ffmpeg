@@ -13,10 +13,13 @@ droid: ffmpeg
 
 systemtarball: ffmpeg
 
+REALTOP=$(realpath $(TOP))
+
 ffmpeg: x264 $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates/libvpx.a
-	cd $(TOP)/external/ffmpeg && \
+	mkdir -p $(PRODUCT_OUT)/obj/ffmpeg
+	cd $(PRODUCT_OUT)/obj/ffmpeg && \
 	export PATH=$(FFMPEG_TCDIR):$(PATH) && \
-	./configure \
+	$(REALTOP)/external/ffmpeg/configure \
 		--arch=arm \
 		--target-os=linux \
 		--prefix=/system \
@@ -30,8 +33,8 @@ ffmpeg: x264 $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates/libvpx.a
 		--enable-libx264 \
 		--enable-cross-compile \
 		--cross-prefix=$(FFMPEG_TCPREFIX) \
-		--extra-ldflags="-nostdlib -Wl,-dynamic-linker,/system/bin/linker,-z,muldefs,-T../../$(BUILD_SYSTEM)/armelf.x,-z,nocopyreloc,--no-undefined -L../../$(TARGET_OUT_STATIC_LIBRARIES) -L../../$(PRODUCT_OUT)/system/lib -L../../$(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates -ldl -lc" \
-		--extra-cflags="$(FFMPEG_COMPILER_FLAGS) -I../../bionic/libc/include -I../../bionic/libc/kernel/common -I../../bionic/libc/kernel/arch-arm -I../../bionic/libc/arch-arm/include -I../../bionic/libm/include -I../libvpx -I../x264" \
+		--extra-ldflags="-nostdlib -Wl,-dynamic-linker,/system/bin/linker,-z,muldefs,-T$(REALTOP)/$(BUILD_SYSTEM)/armelf.x,-z,nocopyreloc,--no-undefined -L$(REALTOP)/$(TARGET_OUT_STATIC_LIBRARIES) -L$(REALTOP)/$(PRODUCT_OUT)/system/lib -L$(REALTOP)/$(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates -ldl -lc" \
+		--extra-cflags="$(FFMPEG_COMPILER_FLAGS) -I$(REALTOP)/bionic/libc/include -I$(REALTOP)/bionic/libc/kernel/common -I$(REALTOP)/bionic/libc/kernel/arch-arm -I$(REALTOP)/bionic/libc/arch-arm/include -I$(REALTOP)/bionic/libm/include -I$(REALTOP)/external/libvpx -I$(REALTOP)/external/x264" \
 		--extra-libs="-lgcc" && \
-	$(MAKE) TARGET_CRTBEGIN_DYNAMIC_O=../../$(TARGET_CRTBEGIN_DYNAMIC_O) TARGET_CRTEND_O=../../$(TARGET_CRTEND_O) $(FF_VERBOSE) && \
-	$(MAKE) install DESTDIR=$(realpath $(TOP)/$(PRODUCT_OUT)/)
+	$(MAKE) TARGET_CRTBEGIN_DYNAMIC_O=$(REALTOP)/$(TARGET_CRTBEGIN_DYNAMIC_O) TARGET_CRTEND_O=$(REALTOP)/$(TARGET_CRTEND_O) $(FF_VERBOSE) && \
+	$(MAKE) install DESTDIR=$(REALTOP)/$(PRODUCT_OUT)
