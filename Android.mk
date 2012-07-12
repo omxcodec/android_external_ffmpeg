@@ -29,7 +29,7 @@ ffmpeg: x264 $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates/libvpx.a
 		--enable-gpl \
 		--disable-avdevice \
 		--enable-runtime-cpudetect \
-		--enable-libvpx \
+		--disable-libvpx \
 		--enable-libx264 \
 		--enable-cross-compile \
 		--cross-prefix=$(FFMPEG_TCPREFIX) \
