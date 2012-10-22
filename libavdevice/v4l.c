@@ -35,6 +35,10 @@
 #include <sys/mman.h>
 #include <sys/time.h>
 #define _LINUX_TIME_H 1
+#ifdef ANDROID
+typedef uint64_t __u64;
+typedef int64_t __s64;
+#endif
 #include <linux/videodev.h>
 #include <time.h>
 #include "avdevice.h"
