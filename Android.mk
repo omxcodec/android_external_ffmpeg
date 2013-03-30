@@ -26,6 +26,7 @@ ffmpeg: $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates/libvpx.a
 		--bindir=/system/bin \
 		--libdir=/system/lib \
 		--enable-shared \
+		--disable-static \
 		--enable-gpl \
 		--disable-avdevice \
 		--enable-runtime-cpudetect \
@@ -36,4 +37,4 @@ ffmpeg: $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libvpx_intermediates/libvpx.a
 		--extra-cflags="$(FFMPEG_COMPILER_FLAGS) -I$(REALTOP)/bionic/libc/include -I$(REALTOP)/bionic/libc/kernel/common -I$(REALTOP)/bionic/libc/kernel/arch-arm -I$(REALTOP)/bionic/libc/arch-arm/include -I$(REALTOP)/bionic/libm/include -I$(REALTOP)/external/libvpx" \
 		--extra-libs="-lgcc" && \
 	$(MAKE) TARGET_CRTBEGIN_DYNAMIC_O=$(REALTOP)/$(TARGET_CRTBEGIN_DYNAMIC_O) TARGET_CRTEND_O=$(REALTOP)/$(TARGET_CRTEND_O) $(FF_VERBOSE) && \
-	$(MAKE) install DESTDIR=$(REALTOP)/$(PRODUCT_OUT)
+	$(MAKE) install-libs DESTDIR=$(REALTOP)/$(PRODUCT_OUT)
