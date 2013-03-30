@@ -21,6 +21,7 @@ LIBAVFORMAT_$MAJOR {
                 ffurl_size;
                 ffurl_write;
                 ffurl_protocol_next;
+                ffurl_register_protocol;
                 url_open;
                 url_close;
                 url_write;
