@@ -2,6 +2,9 @@ include $(SUBDIR)../config.mak
 
 NAME = avfilter
 FFLIBS = avutil
+FFLIBS-$(CONFIG_AVCODEC)                     += avcodec
+FFLIBS-$(CONFIG_AVFORMAT)                    += avformat
+FFLIBS-$(CONFIG_SWSCALE)                     += swscale
 FFLIBS-$(CONFIG_ACONVERT_FILTER)             += swresample
 FFLIBS-$(CONFIG_AMOVIE_FILTER)               += avformat avcodec
 FFLIBS-$(CONFIG_ARESAMPLE_FILTER)            += swresample
@@ -256,5 +259,7 @@ TESTPROGS = drawutils filtfmts formats
 
 TOOLS-$(CONFIG_LIBZMQ) += zmqsend
 
+ifndef ANDROID_BUILDSPEC
 clean::
 	$(RM) $(CLEANSUFFIXES:%=libavfilter/libmpcodecs/%)
+endif
