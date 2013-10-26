@@ -30,10 +30,6 @@
 #include "pngdsp.h"
 #include "thread.h"
 
-/* TODO:
- * - add 16 bit depth support
- */
-
 #include <zlib.h>
 
 typedef struct PNGDecContext {
@@ -60,8 +56,9 @@ typedef struct PNGDecContext {
     uint32_t palette[256];
     uint8_t *crow_buf;
     uint8_t *last_row;
-    int last_row_size;
+    unsigned int last_row_size;
     uint8_t *tmp_row;
+    unsigned int tmp_row_size;
     uint8_t *buffer;
     int buffer_size;
     int pass;
@@ -331,6 +328,7 @@ static void png_handle_row(PNGDecContext *s)
                 png_filter_row(&s->dsp, s->tmp_row, s->crow_buf[0], s->crow_buf + 1,
                                s->last_row, s->pass_row_size, s->bpp);
                 FFSWAP(uint8_t*, s->last_row, s->tmp_row);
+                FFSWAP(unsigned int, s->last_row_size, s->tmp_row_size);
                 got_line = 1;
             }
             if ((png_pass_dsp_ymask[s->pass] << (s->y & 7)) & 0x80) {
@@ -382,6 +380,10 @@ static int png_decode_idat(PNGDecContext *s, int length)
             }
             s->zstream.avail_out = s->crow_size;
             s->zstream.next_out  = s->crow_buf;
+        }
+        if (ret == Z_STREAM_END && s->zstream.avail_in > 0) {
+            av_log(NULL, AV_LOG_WARNING, "%d undecompressed bytes left in buffer\n", s->zstream.avail_in);
+            return 0;
         }
     }
     return 0;
@@ -674,7 +676,7 @@ static int decode_frame(AVCodecContext *avctx,
                     goto fail;
                 if (s->interlace_type ||
                     s->color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
-                    s->tmp_row = av_malloc(s->row_size);
+                    av_fast_padded_malloc(&s->tmp_row, &s->tmp_row_size, s->row_size);
                     if (!s->tmp_row)
                         goto fail;
                 }
@@ -864,7 +866,6 @@ static int decode_frame(AVCodecContext *avctx,
  the_end:
     inflateEnd(&s->zstream);
     s->crow_buf = NULL;
-    av_freep(&s->tmp_row);
     return ret;
  fail:
     av_dict_free(&metadata);
@@ -918,12 +919,15 @@ static av_cold int png_dec_end(AVCodecContext *avctx)
     s->buffer_size = 0;
     av_freep(&s->last_row);
     s->last_row_size = 0;
+    av_freep(&s->tmp_row);
+    s->tmp_row_size = 0;
 
     return 0;
 }
 
 AVCodec ff_png_decoder = {
     .name           = "png",
+    .long_name      = NULL_IF_CONFIG_SMALL("PNG (Portable Network Graphics) image"),
     .type           = AVMEDIA_TYPE_VIDEO,
     .id             = AV_CODEC_ID_PNG,
     .priv_data_size = sizeof(PNGDecContext),
@@ -933,5 +937,4 @@ AVCodec ff_png_decoder = {
     .init_thread_copy = ONLY_IF_THREADS_ENABLED(png_dec_init),
     .update_thread_context = ONLY_IF_THREADS_ENABLED(update_thread_context),
     .capabilities   = CODEC_CAP_DR1 | CODEC_CAP_FRAME_THREADS /*| CODEC_CAP_DRAW_HORIZ_BAND*/,
-    .long_name      = NULL_IF_CONFIG_SMALL("PNG (Portable Network Graphics) image"),
 };

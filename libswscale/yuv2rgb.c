@@ -768,12 +768,12 @@ av_cold int ff_yuv2rgb_c_init_tables(SwsContext *c, const int inv_table[4],
     c->yuv2rgb_u2b_coeff = (int16_t)roundToInt16(cbu << 13);
 
     //scale coefficients by cy
-    crv = ((crv << 16) + 0x8000) / cy;
-    cbu = ((cbu << 16) + 0x8000) / cy;
-    cgu = ((cgu << 16) + 0x8000) / cy;
-    cgv = ((cgv << 16) + 0x8000) / cy;
+    crv = ((crv << 16) + 0x8000) / FFMAX(cy, 1);
+    cbu = ((cbu << 16) + 0x8000) / FFMAX(cy, 1);
+    cgu = ((cgu << 16) + 0x8000) / FFMAX(cy, 1);
+    cgv = ((cgv << 16) + 0x8000) / FFMAX(cy, 1);
 
-    av_free(c->yuvTable);
+    av_freep(&c->yuvTable);
 
     switch (bpp) {
     case 1:
@@ -912,7 +912,6 @@ av_cold int ff_yuv2rgb_c_init_tables(SwsContext *c, const int inv_table[4],
         fill_gv_table(c->table_gV, 4, cgv);
         break;
     default:
-        c->yuvTable = NULL;
         if(!isPlanar(c->dstFormat) || bpp <= 24)
             av_log(c, AV_LOG_ERROR, "%ibpp not supported by yuv2rgb\n", bpp);
         return -1;

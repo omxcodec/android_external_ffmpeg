@@ -164,6 +164,7 @@ void avcodec_register_all(void)
     REGISTER_DECODER(H264_CRYSTALHD,    h264_crystalhd);
     REGISTER_DECODER(H264_VDA,          h264_vda);
     REGISTER_DECODER(H264_VDPAU,        h264_vdpau);
+    REGISTER_DECODER(HEVC,              hevc);
     REGISTER_ENCDEC (HUFFYUV,           huffyuv);
     REGISTER_DECODER(IDCIN,             idcin);
     REGISTER_DECODER(IFF_BYTERUN1,      iff_byterun1);
@@ -285,6 +286,7 @@ void avcodec_register_all(void)
     REGISTER_DECODER(VP6A,              vp6a);
     REGISTER_DECODER(VP6F,              vp6f);
     REGISTER_DECODER(VP8,               vp8);
+    REGISTER_DECODER(VP9,               vp9);
     REGISTER_DECODER(VQA,               vqa);
     REGISTER_DECODER(WEBP,              webp);
     REGISTER_ENCDEC (WMV1,              wmv1);
@@ -431,6 +433,7 @@ void avcodec_register_all(void)
     REGISTER_DECODER(ADPCM_EA_XAS,      adpcm_ea_xas);
     REGISTER_ENCDEC (ADPCM_G722,        adpcm_g722);
     REGISTER_ENCDEC (ADPCM_G726,        adpcm_g726);
+    REGISTER_DECODER(ADPCM_G726LE,      adpcm_g726le);
     REGISTER_DECODER(ADPCM_IMA_AMV,     adpcm_ima_amv);
     REGISTER_DECODER(ADPCM_IMA_APC,     adpcm_ima_apc);
     REGISTER_DECODER(ADPCM_IMA_DK3,     adpcm_ima_dk3);
@@ -505,6 +508,7 @@ void avcodec_register_all(void)
     REGISTER_ENCODER(LIBX264RGB,        libx264rgb);
     REGISTER_ENCODER(LIBXAVS,           libxavs);
     REGISTER_ENCODER(LIBXVID,           libxvid);
+    REGISTER_DECODER(LIBZVBI_TELETEXT,  libzvbi_teletext);
     REGISTER_ENCODER(LIBAACPLUS,        libaacplus);
 
     /* text */
@@ -523,6 +527,7 @@ void avcodec_register_all(void)
     REGISTER_PARSER(DCA,                dca);
     REGISTER_PARSER(DIRAC,              dirac);
     REGISTER_PARSER(DNXHD,              dnxhd);
+    REGISTER_PARSER(DPX,                dpx);
     REGISTER_PARSER(DVBSUB,             dvbsub);
     REGISTER_PARSER(DVDSUB,             dvdsub);
     REGISTER_PARSER(DVD_NAV,            dvd_nav);
@@ -531,6 +536,7 @@ void avcodec_register_all(void)
     REGISTER_PARSER(H261,               h261);
     REGISTER_PARSER(H263,               h263);
     REGISTER_PARSER(H264,               h264);
+    REGISTER_PARSER(HEVC,               hevc);
     REGISTER_PARSER(MJPEG,              mjpeg);
     REGISTER_PARSER(MLP,                mlp);
     REGISTER_PARSER(MPEG4VIDEO,         mpeg4video);

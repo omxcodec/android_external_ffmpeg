@@ -182,11 +182,15 @@ AVFilterContext *avfilter_graph_alloc_filter(AVFilterGraph *graph,
 {
     AVFilterContext **filters, *s;
 
-    if (graph->thread_type && !graph->internal->thread) {
-        int ret = ff_graph_thread_init(graph);
-        if (ret < 0) {
-            av_log(graph, AV_LOG_ERROR, "Error initializing threading.\n");
-            return NULL;
+    if (graph->thread_type && !graph->internal->thread_execute) {
+        if (graph->execute) {
+            graph->internal->thread_execute = graph->execute;
+        } else {
+            int ret = ff_graph_thread_init(graph);
+            if (ret < 0) {
+                av_log(graph, AV_LOG_ERROR, "Error initializing threading.\n");
+                return NULL;
+            }
         }
     }
 
@@ -220,7 +224,7 @@ FF_ENABLE_DEPRECATION_WARNINGS
  * A graph is considered valid if all its input and output pads are
  * connected.
  *
- * @return 0 in case of success, a negative value otherwise
+ * @return >= 0 in case of success, a negative value otherwise
  */
 static int graph_check_validity(AVFilterGraph *graph, AVClass *log_ctx)
 {
@@ -258,7 +262,7 @@ static int graph_check_validity(AVFilterGraph *graph, AVClass *log_ctx)
 /**
  * Configure all the links of graphctx.
  *
- * @return 0 in case of success, a negative value otherwise
+ * @return >= 0 in case of success, a negative value otherwise
  */
 static int graph_config_links(AVFilterGraph *graph, AVClass *log_ctx)
 {

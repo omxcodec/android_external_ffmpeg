@@ -394,6 +394,7 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
                              int alpha, int swap, int bpp, int width)
 {
     int x, h, i;
+    int src_alpha = src[3] != NULL;
     int scale_high = 16 - bpp, scale_low = (bpp - 8) * 2;
     for (h = 0; h < srcSliceH; h++) {
         uint16_t *dest = (uint16_t *)(dst + dstStride * h);
@@ -401,7 +402,7 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
 
         switch(swap) {
         case 3:
-            if (alpha) {
+            if (alpha && !src_alpha) {
                 for (x = 0; x < width; x++) {
                     component = av_bswap16(src[0][x]);
                     *dest++ = av_bswap16(component << scale_high | component >> scale_low);
@@ -410,6 +411,17 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
                     component = av_bswap16(src[2][x]);
                     *dest++ = av_bswap16(component << scale_high | component >> scale_low);
                     *dest++ = 0xffff;
+                }
+            } else if (alpha && src_alpha) {
+                for (x = 0; x < width; x++) {
+                    component = av_bswap16(src[0][x]);
+                    *dest++ = av_bswap16(component << scale_high | component >> scale_low);
+                    component = av_bswap16(src[1][x]);
+                    *dest++ = av_bswap16(component << scale_high | component >> scale_low);
+                    component = av_bswap16(src[2][x]);
+                    *dest++ = av_bswap16(component << scale_high | component >> scale_low);
+                    component = av_bswap16(src[3][x]);
+                    *dest++ = av_bswap16(component << scale_high | component >> scale_low);
                 }
             } else {
                 for (x = 0; x < width; x++) {
@@ -423,12 +435,19 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
             }
             break;
         case 2:
-            if (alpha) {
+            if (alpha && !src_alpha) {
                 for (x = 0; x < width; x++) {
                     *dest++ = av_bswap16(src[0][x] << scale_high | src[0][x] >> scale_low);
                     *dest++ = av_bswap16(src[1][x] << scale_high | src[1][x] >> scale_low);
                     *dest++ = av_bswap16(src[2][x] << scale_high | src[2][x] >> scale_low);
                     *dest++ = 0xffff;
+                }
+            } else if (alpha && src_alpha) {
+                for (x = 0; x < width; x++) {
+                    *dest++ = av_bswap16(src[0][x] << scale_high | src[0][x] >> scale_low);
+                    *dest++ = av_bswap16(src[1][x] << scale_high | src[1][x] >> scale_low);
+                    *dest++ = av_bswap16(src[2][x] << scale_high | src[2][x] >> scale_low);
+                    *dest++ = av_bswap16(src[3][x] << scale_high | src[3][x] >> scale_low);
                 }
             } else {
                 for (x = 0; x < width; x++) {
@@ -439,12 +458,19 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
             }
             break;
         case 1:
-            if (alpha) {
+            if (alpha && !src_alpha) {
                 for (x = 0; x < width; x++) {
                     *dest++ = av_bswap16(src[0][x]) << scale_high | av_bswap16(src[0][x]) >> scale_low;
                     *dest++ = av_bswap16(src[1][x]) << scale_high | av_bswap16(src[1][x]) >> scale_low;
                     *dest++ = av_bswap16(src[2][x]) << scale_high | av_bswap16(src[2][x]) >> scale_low;
                     *dest++ = 0xffff;
+                }
+            } else if (alpha && src_alpha) {
+                for (x = 0; x < width; x++) {
+                    *dest++ = av_bswap16(src[0][x]) << scale_high | av_bswap16(src[0][x]) >> scale_low;
+                    *dest++ = av_bswap16(src[1][x]) << scale_high | av_bswap16(src[1][x]) >> scale_low;
+                    *dest++ = av_bswap16(src[2][x]) << scale_high | av_bswap16(src[2][x]) >> scale_low;
+                    *dest++ = av_bswap16(src[3][x]) << scale_high | av_bswap16(src[3][x]) >> scale_low;
                 }
             } else {
                 for (x = 0; x < width; x++) {
@@ -455,12 +481,19 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
             }
             break;
         default:
-            if (alpha) {
+            if (alpha && !src_alpha) {
                 for (x = 0; x < width; x++) {
                     *dest++ = src[0][x] << scale_high | src[0][x] >> scale_low;
                     *dest++ = src[1][x] << scale_high | src[1][x] >> scale_low;
                     *dest++ = src[2][x] << scale_high | src[2][x] >> scale_low;
                     *dest++ = 0xffff;
+                }
+            } else if (alpha && src_alpha) {
+                for (x = 0; x < width; x++) {
+                    *dest++ = src[0][x] << scale_high | src[0][x] >> scale_low;
+                    *dest++ = src[1][x] << scale_high | src[1][x] >> scale_low;
+                    *dest++ = src[2][x] << scale_high | src[2][x] >> scale_low;
+                    *dest++ = src[3][x] << scale_high | src[3][x] >> scale_low;
                 }
             } else {
                 for (x = 0; x < width; x++) {
@@ -470,7 +503,7 @@ static void gbr16ptopacked16(const uint16_t *src[], int srcStride[],
                 }
             }
         }
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 3 + src_alpha; i++)
             src[i] += srcStride[i] >> 1;
     }
 }
@@ -479,10 +512,10 @@ static int planarRgb16ToRgb16Wrapper(SwsContext *c, const uint8_t *src[],
                                      int srcStride[], int srcSliceY, int srcSliceH,
                                      uint8_t *dst[], int dstStride[])
 {
-    const uint16_t *src102[] = { (uint16_t *)src[1], (uint16_t *)src[0], (uint16_t *)src[2] };
-    const uint16_t *src201[] = { (uint16_t *)src[2], (uint16_t *)src[0], (uint16_t *)src[1] };
-    int stride102[] = { srcStride[1], srcStride[0], srcStride[2] };
-    int stride201[] = { srcStride[2], srcStride[0], srcStride[1] };
+    const uint16_t *src102[] = { (uint16_t *)src[1], (uint16_t *)src[0], (uint16_t *)src[2], (uint16_t *)src[3] };
+    const uint16_t *src201[] = { (uint16_t *)src[2], (uint16_t *)src[0], (uint16_t *)src[1], (uint16_t *)src[3] };
+    int stride102[] = { srcStride[1], srcStride[0], srcStride[2], srcStride[3] };
+    int stride201[] = { srcStride[2], srcStride[0], srcStride[1], srcStride[3] };
     const AVPixFmtDescriptor *src_format = av_pix_fmt_desc_get(c->srcFormat);
     const AVPixFmtDescriptor *dst_format = av_pix_fmt_desc_get(c->dstFormat);
     int bits_per_sample = src_format->comp[0].depth_minus1 + 1;
@@ -879,8 +912,13 @@ static int rgbToRgbWrapper(SwsContext *c, const uint8_t *src[], int srcStride[],
             srcPtr += ALT32_CORR;
 
         if ((dstFormat == AV_PIX_FMT_RGB32_1 || dstFormat == AV_PIX_FMT_BGR32_1) &&
-            !isRGBA32(srcFormat))
+            !isRGBA32(srcFormat)) {
+            int i;
+            av_assert0(ALT32_CORR == 1);
+            for (i = 0; i < srcSliceH; i++)
+                dstPtr[dstStride[0] * (srcSliceY + i)] = 255;
             dstPtr += ALT32_CORR;
+        }
 
         if (dstStride[0] * srcBpp == srcStride[0] * dstBpp && srcStride[0] > 0 &&
             !(srcStride[0] % srcBpp) && !dst_bswap && !src_bswap)
@@ -1220,7 +1258,8 @@ void ff_get_unscaled_swscale(SwsContext *c)
          srcFormat == AV_PIX_FMT_GBRP16LE || srcFormat == AV_PIX_FMT_GBRP16BE ||
          srcFormat == AV_PIX_FMT_GBRP10LE || srcFormat == AV_PIX_FMT_GBRP10BE ||
          srcFormat == AV_PIX_FMT_GBRP12LE || srcFormat == AV_PIX_FMT_GBRP12BE ||
-         srcFormat == AV_PIX_FMT_GBRP14LE || srcFormat == AV_PIX_FMT_GBRP14BE) &&
+         srcFormat == AV_PIX_FMT_GBRP14LE || srcFormat == AV_PIX_FMT_GBRP14BE ||
+         srcFormat == AV_PIX_FMT_GBRAP16LE || srcFormat == AV_PIX_FMT_GBRAP16BE) &&
         (dstFormat == AV_PIX_FMT_RGB48LE  || dstFormat == AV_PIX_FMT_RGB48BE  ||
          dstFormat == AV_PIX_FMT_BGR48LE  || dstFormat == AV_PIX_FMT_BGR48BE  ||
          dstFormat == AV_PIX_FMT_RGBA64LE || dstFormat == AV_PIX_FMT_RGBA64BE ||

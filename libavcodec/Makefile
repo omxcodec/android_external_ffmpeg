@@ -233,6 +233,10 @@ OBJS-$(CONFIG_H264_DECODER)            += h264.o                               \
                                           cabac.o h264_sei.o h264_ps.o         \
                                           h264_refs.o h264_cavlc.o h264_cabac.o
 OBJS-$(CONFIG_H264_VDA_DECODER)        += vda_h264_dec.o
+OBJS-$(CONFIG_HEVC_DECODER)            += hevc.o hevc_mvs.o hevc_ps.o hevc_sei.o \
+                                          hevc_cabac.o hevc_refs.o hevcpred.o    \
+                                          hevcdsp.o hevc_filter.o cabac.o
+
 OBJS-$(CONFIG_HUFFYUV_DECODER)         += huffyuv.o huffyuvdec.o
 OBJS-$(CONFIG_HUFFYUV_ENCODER)         += huffyuv.o huffyuvenc.o
 OBJS-$(CONFIG_IAC_DECODER)             += imc.o
@@ -343,7 +347,7 @@ OBJS-$(CONFIG_PNG_DECODER)             += png.o pngdec.o pngdsp.o
 OBJS-$(CONFIG_PNG_ENCODER)             += png.o pngenc.o
 OBJS-$(CONFIG_PPM_DECODER)             += pnmdec.o pnm.o
 OBJS-$(CONFIG_PPM_ENCODER)             += pnmenc.o pnm.o
-OBJS-$(CONFIG_PRORES_DECODER)          += proresdec2.o proresdsp.o
+OBJS-$(CONFIG_PRORES_DECODER)          += proresdec2.o proresdsp.o proresdata.o
 OBJS-$(CONFIG_PRORES_LGPL_DECODER)     += proresdec_lgpl.o proresdsp.o proresdata.o
 OBJS-$(CONFIG_PRORES_ENCODER)          += proresenc_anatoliy.o
 OBJS-$(CONFIG_PRORES_AW_ENCODER)       += proresenc_anatoliy.o
@@ -471,11 +475,13 @@ OBJS-$(CONFIG_VP5_DECODER)             += vp5.o vp56.o vp56data.o vp56dsp.o \
 OBJS-$(CONFIG_VP6_DECODER)             += vp6.o vp56.o vp56data.o vp56dsp.o \
                                           vp6dsp.o vp56rac.o
 OBJS-$(CONFIG_VP8_DECODER)             += vp8.o vp8dsp.o vp56rac.o
+OBJS-$(CONFIG_VP9_DECODER)             += vp9.o vp9dsp.o vp56rac.o
 OBJS-$(CONFIG_VPLAYER_DECODER)         += textdec.o ass.o
 OBJS-$(CONFIG_VQA_DECODER)             += vqavideo.o
 OBJS-$(CONFIG_WAVPACK_DECODER)         += wavpack.o
 OBJS-$(CONFIG_WAVPACK_ENCODER)         += wavpackenc.o
 OBJS-$(CONFIG_WEBP_DECODER)            += vp8.o vp8dsp.o vp56rac.o
+OBJS-$(CONFIG_WEBP_DECODER)            += webp.o
 OBJS-$(CONFIG_WEBVTT_DECODER)          += webvttdec.o
 OBJS-$(CONFIG_WMALOSSLESS_DECODER)     += wmalosslessdec.o wma_common.o
 OBJS-$(CONFIG_WMAPRO_DECODER)          += wmaprodec.o wma.o wma_common.o
@@ -521,8 +527,8 @@ OBJS-$(CONFIG_ZMBV_ENCODER)            += zmbvenc.o
 # (AD)PCM decoders/encoders
 OBJS-$(CONFIG_PCM_ALAW_DECODER)           += pcm.o
 OBJS-$(CONFIG_PCM_ALAW_ENCODER)           += pcm.o
-OBJS-$(CONFIG_PCM_BLURAY_DECODER)         += pcm-mpeg.o
-OBJS-$(CONFIG_PCM_DVD_DECODER)            += pcm.o
+OBJS-$(CONFIG_PCM_BLURAY_DECODER)         += pcm-bluray.o
+OBJS-$(CONFIG_PCM_DVD_DECODER)            += pcm-dvd.o
 OBJS-$(CONFIG_PCM_F32BE_DECODER)          += pcm.o
 OBJS-$(CONFIG_PCM_F32BE_ENCODER)          += pcm.o
 OBJS-$(CONFIG_PCM_F32LE_DECODER)          += pcm.o
@@ -727,6 +733,7 @@ OBJS-$(CONFIG_LIBWAVPACK_ENCODER)         += libwavpackenc.o
 OBJS-$(CONFIG_LIBX264_ENCODER)            += libx264.o
 OBJS-$(CONFIG_LIBXAVS_ENCODER)            += libxavs.o
 OBJS-$(CONFIG_LIBXVID_ENCODER)            += libxvid.o
+OBJS-$(CONFIG_LIBZVBI_TELETEXT_DECODER)   += libzvbi-teletextdec.o
 
 # parsers
 OBJS-$(CONFIG_AAC_PARSER)              += aac_parser.o aac_ac3_parser.o \
@@ -741,6 +748,7 @@ OBJS-$(CONFIG_COOK_PARSER)             += cook_parser.o
 OBJS-$(CONFIG_DCA_PARSER)              += dca_parser.o dca.o
 OBJS-$(CONFIG_DIRAC_PARSER)            += dirac_parser.o
 OBJS-$(CONFIG_DNXHD_PARSER)            += dnxhd_parser.o
+OBJS-$(CONFIG_DPX_PARSER)              += dpx_parser.o
 OBJS-$(CONFIG_DVBSUB_PARSER)           += dvbsub_parser.o
 OBJS-$(CONFIG_DVD_NAV_PARSER)          += dvd_nav_parser.o
 OBJS-$(CONFIG_DVDSUB_PARSER)           += dvdsub_parser.o
@@ -754,6 +762,7 @@ OBJS-$(CONFIG_H264_PARSER)             += h264_parser.o h264.o            \
                                           h264_refs.o h264_sei.o h264_direct.o \
                                           h264_loopfilter.o h264_cabac.o \
                                           h264_cavlc.o h264_ps.o
+OBJS-$(CONFIG_HEVC_PARSER)             += hevc_parser.o
 OBJS-$(CONFIG_MJPEG_PARSER)            += mjpeg_parser.o
 OBJS-$(CONFIG_MLP_PARSER)              += mlp_parser.o mlp.o
 OBJS-$(CONFIG_MPEG4VIDEO_PARSER)       += mpeg4video_parser.o h263.o \

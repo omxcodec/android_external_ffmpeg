@@ -297,7 +297,7 @@ static void mc_block(Plane *p, uint8_t *dst, const uint8_t *src, int stride, int
     }
 }
 
-void ff_snow_pred_block(SnowContext *s, uint8_t *dst, uint8_t *tmp, int stride, int sx, int sy, int b_w, int b_h, BlockNode *block, int plane_index, int w, int h){
+void ff_snow_pred_block(SnowContext *s, uint8_t *dst, uint8_t *tmp, ptrdiff_t stride, int sx, int sy, int b_w, int b_h, BlockNode *block, int plane_index, int w, int h){
     if(block->type & BLOCK_INTRA){
         int x, y;
         const unsigned color  = block->color[plane_index];
@@ -349,7 +349,9 @@ void ff_snow_pred_block(SnowContext *s, uint8_t *dst, uint8_t *tmp, int stride, 
         src += sx + sy*stride;
         if(   (unsigned)sx >= FFMAX(w - b_w - (HTAPS_MAX-2), 0)
            || (unsigned)sy >= FFMAX(h - b_h - (HTAPS_MAX-2), 0)){
-            s->vdsp.emulated_edge_mc(tmp + MB_SIZE, src, stride, b_w+HTAPS_MAX-1, b_h+HTAPS_MAX-1, sx, sy, w, h);
+            s->vdsp.emulated_edge_mc(tmp + MB_SIZE, stride, src, stride,
+                                     b_w+HTAPS_MAX-1, b_h+HTAPS_MAX-1,
+                                     sx, sy, w, h);
             src= tmp + MB_SIZE;
         }
 

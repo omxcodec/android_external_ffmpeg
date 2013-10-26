@@ -1043,6 +1043,7 @@ typedef struct AVFormatContext {
 #define AVFMT_FLAG_NOBUFFER     0x0040 ///< Do not buffer frames when possible
 #define AVFMT_FLAG_CUSTOM_IO    0x0080 ///< The caller has supplied a custom AVIOContext, don't avio_close() it.
 #define AVFMT_FLAG_DISCARD_CORRUPT  0x0100 ///< Discard frames marked corrupted
+#define AVFMT_FLAG_FLUSH_PACKETS    0x0200 ///< Flush the AVIOContext every packet.
 #define AVFMT_FLAG_MP4A_LATM    0x8000 ///< Enable RTP MP4A-LATM payload
 #define AVFMT_FLAG_SORT_DTS    0x10000 ///< try to interleave outputted packets by dts (using this flag can slow demuxing down)
 #define AVFMT_FLAG_PRIV_OPT    0x20000 ///< Enable use of private options by delaying codec open (this could be made default once all code is converted)
@@ -1101,6 +1102,17 @@ typedef struct AVFormatContext {
      */
     unsigned int max_picture_buffer;
 
+    /**
+     * Number of chapters in AVChapter array.
+     * When muxing, chapters are normally written in the file header,
+     * so nb_chapters should normally be initialized before write_header
+     * is called. Some muxers (e.g. mov and mkv) can also write chapters
+     * in the trailer.  To write chapters in the trailer, nb_chapters
+     * must be zero when write_header is called and non-zero when
+     * write_trailer is called.
+     * muxing  : set by user
+     * demuxing: set by libavformat
+     */
     unsigned int nb_chapters;
     AVChapter **chapters;
 
@@ -1303,9 +1315,39 @@ typedef struct AVFormatContext {
      * Demuxers can use the flag to detect such changes.
      */
     int io_repositioned;
+
+    /**
+     * Forced video codec.
+     * This allows forcing a specific decoder, even when there are multiple with
+     * the same codec_id.
+     * Demuxing: Set by user via av_format_set_video_codec (NO direct access).
+     */
+    AVCodec *video_codec;
+
+    /**
+     * Forced audio codec.
+     * This allows forcing a specific decoder, even when there are multiple with
+     * the same codec_id.
+     * Demuxing: Set by user via av_format_set_audio_codec (NO direct access).
+     */
+    AVCodec *audio_codec;
+
+    /**
+     * Forced subtitle codec.
+     * This allows forcing a specific decoder, even when there are multiple with
+     * the same codec_id.
+     * Demuxing: Set by user via av_format_set_subtitle_codec (NO direct access).
+     */
+    AVCodec *subtitle_codec;
 } AVFormatContext;
 
 int av_format_get_probe_score(const AVFormatContext *s);
+AVCodec * av_format_get_video_codec(const AVFormatContext *s);
+void      av_format_set_video_codec(AVFormatContext *s, AVCodec *c);
+AVCodec * av_format_get_audio_codec(const AVFormatContext *s);
+void      av_format_set_audio_codec(AVFormatContext *s, AVCodec *c);
+AVCodec * av_format_get_subtitle_codec(const AVFormatContext *s);
+void      av_format_set_subtitle_codec(AVFormatContext *s, AVCodec *c);
 
 /**
  * Returns the method used to set ctx->duration.

@@ -22,7 +22,6 @@
 #include "libavutil/log.h"
 #include "libavutil/opt.h"
 #include "avcodec.h"
-#include "internal.h"
 #include "dsputil.h"
 #include "internal.h"
 #include "snow_dwt.h"
@@ -1550,7 +1549,7 @@ static void calculate_visual_weight(SnowContext *s, Plane *p){
 }
 
 static int encode_frame(AVCodecContext *avctx, AVPacket *pkt,
-                        const AVFrame *pict, int *got_packet)
+                        AVFrame *pict, int *got_packet)
 {
     SnowContext *s = avctx->priv_data;
     RangeCoder * const c= &s->c;
@@ -1879,6 +1878,7 @@ static const AVClass snowenc_class = {
 
 AVCodec ff_snow_encoder = {
     .name           = "snow",
+    .long_name      = NULL_IF_CONFIG_SMALL("Snow"),
     .type           = AVMEDIA_TYPE_VIDEO,
     .id             = AV_CODEC_ID_SNOW,
     .priv_data_size = sizeof(SnowContext),
@@ -1890,7 +1890,6 @@ AVCodec ff_snow_encoder = {
         AV_PIX_FMT_GRAY8,
         AV_PIX_FMT_NONE
     },
-    .long_name      = NULL_IF_CONFIG_SMALL("Snow"),
     .priv_class     = &snowenc_class,
 };
 

@@ -1931,7 +1931,7 @@ void ff_set_cmp(DSPContext* c, me_cmp_func *cmp, int type){
 
 static void add_bytes_c(uint8_t *dst, uint8_t *src, int w){
     long i;
-    for(i=0; i<=w-sizeof(long); i+=sizeof(long)){
+    for(i=0; i<=w-(int)sizeof(long); i+=sizeof(long)){
         long a = *(long*)(src+i);
         long b = *(long*)(dst+i);
         *(long*)(dst+i) = ((a&pb_7f) + (b&pb_7f)) ^ ((a^b)&pb_80);
@@ -1956,7 +1956,7 @@ static void diff_bytes_c(uint8_t *dst, const uint8_t *src1, const uint8_t *src2,
         }
     }else
 #endif
-    for(i=0; i<=w-sizeof(long); i+=sizeof(long)){
+    for(i=0; i<=w-(int)sizeof(long); i+=sizeof(long)){
         long a = *(long*)(src1+i);
         long b = *(long*)(src2+i);
         *(long*)(dst+i) = ((a|pb_80) - (b&pb_7f)) ^ ((a^b^pb_80)&pb_80);
@@ -2719,6 +2719,11 @@ av_cold void ff_dsputil_init(DSPContext* c, AVCodecContext *avctx)
             c->idct_put              = ff_simple_idct_put_10;
             c->idct_add              = ff_simple_idct_add_10;
             c->idct                  = ff_simple_idct_10;
+            c->idct_permutation_type = FF_NO_IDCT_PERM;
+        } else if (avctx->bits_per_raw_sample == 12) {
+            c->idct_put              = ff_simple_idct_put_12;
+            c->idct_add              = ff_simple_idct_add_12;
+            c->idct                  = ff_simple_idct_12;
             c->idct_permutation_type = FF_NO_IDCT_PERM;
         } else {
         if(avctx->idct_algo==FF_IDCT_INT){

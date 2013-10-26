@@ -98,6 +98,7 @@ typedef struct MOVTrack {
     int         language;
     int         track_id;
     int         tag; ///< stsd fourcc
+    AVStream    *st;
     AVCodecContext *enc;
 
     int         vos_len;
@@ -124,7 +125,6 @@ typedef struct MOVTrack {
     HintSampleQueue sample_queue;
 
     AVIOContext *mdat_buf;
-    int64_t     moof_size_offset;
     int64_t     data_offset;
     int64_t     frag_start;
     int64_t     tfrf_offset;
@@ -183,6 +183,7 @@ typedef struct MOVMuxContext {
 #define FF_MOV_FLAG_FRAG_CUSTOM 32
 #define FF_MOV_FLAG_ISML 64
 #define FF_MOV_FLAG_FASTSTART 128
+#define FF_MOV_FLAG_OMIT_TFHD_OFFSET 256
 
 int ff_mov_write_packet(AVFormatContext *s, AVPacket *pkt);
 

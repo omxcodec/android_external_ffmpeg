@@ -47,6 +47,7 @@
 #include "libavutil/eval.h"
 #include "libavutil/dict.h"
 #include "libavutil/opt.h"
+#include "libavutil/cpu.h"
 #include "cmdutils.h"
 #include "version.h"
 #if CONFIG_NETWORK
@@ -500,7 +501,7 @@ void parse_loglevel(int argc, char **argv, const OptionDef *options)
 static const AVOption *opt_find(void *obj, const char *name, const char *unit,
                             int opt_flags, int search_flags)
 {
-    AVOption *o = av_opt_find(obj, name, unit, opt_flags, search_flags);
+    const AVOption *o = av_opt_find(obj, name, unit, opt_flags, search_flags);
     if(o && !o->flags)
         return NULL;
     return o;
@@ -808,6 +809,18 @@ do {                                                                           \
     return 0;
 }
 
+int opt_cpuflags(void *optctx, const char *opt, const char *arg)
+{
+    int ret;
+    unsigned flags = av_get_cpu_flags();
+
+    if ((ret = av_parse_cpu_caps(&flags, arg)) < 0)
+        return ret;
+
+    av_force_cpu_flags(flags);
+    return 0;
+}
+
 int opt_loglevel(void *optctx, const char *opt, const char *arg)
 {
     const struct { const char *name; int level; } log_levels[] = {
@@ -957,18 +970,6 @@ int opt_max_alloc(void *optctx, const char *opt, const char *arg)
         exit_program(1);
     }
     av_max_alloc(max);
-    return 0;
-}
-
-int opt_cpuflags(void *optctx, const char *opt, const char *arg)
-{
-    int ret;
-    unsigned flags = av_get_cpu_flags();
-
-    if ((ret = av_parse_cpu_caps(&flags, arg)) < 0)
-        return ret;
-
-    av_force_cpu_flags(flags);
     return 0;
 }
 
@@ -1481,8 +1482,9 @@ int show_filters(void *optctx, const char *opt, const char *arg)
     const AVFilterPad *pad;
 
     printf("Filters:\n"
-           "  T. = Timeline support\n"
-           "  .S = Slice threading\n"
+           "  T.. = Timeline support\n"
+           "  .S. = Slice threading\n"
+           "  ..C = Commmand support\n"
            "  A = Audio input/output\n"
            "  V = Video input/output\n"
            "  N = Dynamic number and/or type of input/output\n"
@@ -1506,9 +1508,10 @@ int show_filters(void *optctx, const char *opt, const char *arg)
                                   ( i && (filter->flags & AVFILTER_FLAG_DYNAMIC_OUTPUTS))) ? 'N' : '|';
         }
         *descr_cur = 0;
-        printf(" %c%c %-16s %-10s %s\n",
+        printf(" %c%c%c %-16s %-10s %s\n",
                filter->flags & AVFILTER_FLAG_SUPPORT_TIMELINE ? 'T' : '.',
                filter->flags & AVFILTER_FLAG_SLICE_THREADS    ? 'S' : '.',
+               filter->process_command                        ? 'C' : '.',
                filter->name, descr, filter->description);
     }
 #endif

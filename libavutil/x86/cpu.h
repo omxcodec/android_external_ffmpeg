@@ -26,6 +26,20 @@
 #define AV_CPU_FLAG_AMD3DNOW    AV_CPU_FLAG_3DNOW
 #define AV_CPU_FLAG_AMD3DNOWEXT AV_CPU_FLAG_3DNOWEXT
 
+#define X86_AMD3DNOW(flags)         CPUEXT(flags, AMD3DNOW)
+#define X86_AMD3DNOWEXT(flags)      CPUEXT(flags, AMD3DNOWEXT)
+#define X86_MMX(flags)              CPUEXT(flags, MMX)
+#define X86_MMXEXT(flags)           CPUEXT(flags, MMXEXT)
+#define X86_SSE(flags)              CPUEXT(flags, SSE)
+#define X86_SSE2(flags)             CPUEXT(flags, SSE2)
+#define X86_SSE3(flags)             CPUEXT(flags, SSE3)
+#define X86_SSSE3(flags)            CPUEXT(flags, SSSE3)
+#define X86_SSE4(flags)             CPUEXT(flags, SSE4)
+#define X86_SSE42(flags)            CPUEXT(flags, SSE42)
+#define X86_AVX(flags)              CPUEXT(flags, AVX)
+#define X86_FMA4(flags)             CPUEXT(flags, FMA4)
+#define X86_AVX2(flags)             CPUEXT(flags, AVX2)
+
 #define EXTERNAL_AMD3DNOW(flags)    CPUEXT_SUFFIX(flags, _EXTERNAL, AMD3DNOW)
 #define EXTERNAL_AMD3DNOWEXT(flags) CPUEXT_SUFFIX(flags, _EXTERNAL, AMD3DNOWEXT)
 #define EXTERNAL_MMX(flags)         CPUEXT_SUFFIX(flags, _EXTERNAL, MMX)
@@ -38,6 +52,7 @@
 #define EXTERNAL_SSE42(flags)       CPUEXT_SUFFIX(flags, _EXTERNAL, SSE42)
 #define EXTERNAL_AVX(flags)         CPUEXT_SUFFIX(flags, _EXTERNAL, AVX)
 #define EXTERNAL_FMA4(flags)        CPUEXT_SUFFIX(flags, _EXTERNAL, FMA4)
+#define EXTERNAL_AVX2(flags)        CPUEXT_SUFFIX(flags, _EXTERNAL, AVX2)
 
 #define INLINE_AMD3DNOW(flags)      CPUEXT_SUFFIX(flags, _INLINE, AMD3DNOW)
 #define INLINE_AMD3DNOWEXT(flags)   CPUEXT_SUFFIX(flags, _INLINE, AMD3DNOWEXT)
@@ -51,6 +66,7 @@
 #define INLINE_SSE42(flags)         CPUEXT_SUFFIX(flags, _INLINE, SSE42)
 #define INLINE_AVX(flags)           CPUEXT_SUFFIX(flags, _INLINE, AVX)
 #define INLINE_FMA4(flags)          CPUEXT_SUFFIX(flags, _INLINE, FMA4)
+#define INLINE_AVX2(flags)          CPUEXT_SUFFIX(flags, _INLINE, AVX2)
 
 void ff_cpu_cpuid(int index, int *eax, int *ebx, int *ecx, int *edx);
 void ff_cpu_xgetbv(int op, int *eax, int *edx);
